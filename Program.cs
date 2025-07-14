@@ -9,39 +9,19 @@ namespace CatWorx.BadgeMaker
 {
     class Program
     {
-        static List<Employee> GetEmployees()
-        {
-            List<Employee> employees = new List<Employee>();
-            // Collect user values until the value is an empty string
-            while (true)
-            {
-                Console.WriteLine("Please enter a name: (leave empty to exit): ");
-                // Get a name from the console and assign it to a variable
-                string firstName = Console.ReadLine() ?? "";
-                // Break if the user hits ENTER without typing a name
-                if (firstName == "")
-                {
-                    break;
-                }
-
-                Console.Write("Enter last name: ");
-                string lastName = Console.ReadLine() ?? "";
-                Console.Write("Enter ID: ");
-                int id = Int32.Parse(Console.ReadLine() ?? "");
-                Console.Write("Enter Photo URL: ");
-                string photoUrl = Console.ReadLine() ?? "";
-
-                // Create a new Employee instance
-                Employee currentEmployee = new Employee(firstName, lastName, id, photoUrl);
-                employees.Add(currentEmployee);
-            }
-            return employees;
-        }
-
         async static Task Main(string[] args)
         {
-            // This is our employee-getting code now
-            List<Employee> employees = GetEmployees();
+            Console.Write("Type Y to download employees from API or N to enter employee data manually: ");
+            string response = Console.ReadLine() ?? "";
+            List<Employee> employees = new List<Employee>();
+            if (response == "Y")
+            {
+                employees = await PeopleFetcher.GetFromApi();
+            }
+            else
+            {
+                employees = PeopleFetcher.GetEmployees();
+            }
             Util.PrintEmployees(employees);
             Util.MakeCSV(employees);
             await Util.MakeBadges(employees);
